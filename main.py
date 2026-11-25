@@ -1,27 +1,40 @@
-"""Monday Morning Punchlines: one original one-line joke about Monday mornings."""
+"""Monday Morning Punchlines: one joke about Monday mornings.
 
-import os
+The script keeps a single joke, checks it against the competition
+gate (plain text, between 1 and 200 characters), writes it to
+/output/entry.txt, and prints the joke with its character count.
+"""
 
-ENTRY = "I set three alarms for 6:00, 6:05 and 6:07 on Monday, and by 6:40 my phone gave up and texted my boss that I was stuck in traffic. I was still in bed. The traffic was my blanket."
+from pathlib import Path
 
-OUTPUT_PATH = "/output/entry.txt"
+JOKE = "Monday: my 6:00, 6:12 and 6:20 alarms all lost to snooze, so by 6:55 my phone emailed Dave that traffic was gridlocked. I hadn't left bed. The gridlock was my duvet."
 
-MAX_CHARS = 200
+CHAR_LIMIT = 200
+DESTINATION = Path("/output/entry.txt")
 
 
-def main():
-    if not ENTRY.strip():
-        raise ValueError("Entry must not be only whitespace.")
-    if len(ENTRY) > MAX_CHARS:
+def _checked_text(text):
+    """Return the joke unchanged if it passes the gate, else raise."""
+    if not text.strip():
+        raise ValueError("joke must contain non-whitespace text")
+    if len(text) > CHAR_LIMIT:
         raise ValueError(
-            f"Entry is {len(ENTRY)} characters, over the {MAX_CHARS} limit."
+            "joke is %d characters, over the %d limit" % (len(text), CHAR_LIMIT)
         )
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        f.write(ENTRY + "\n")
-    print(ENTRY)
-    print(f"Characters: {len(ENTRY)}")
+    return text
+
+
+def _publish(text):
+    DESTINATION.parent.mkdir(parents=True, exist_ok=True)
+    DESTINATION.write_text(text + "\n", encoding="utf-8")
+
+
+def run():
+    joke = _checked_text(JOKE)
+    _publish(joke)
+    print(joke)
+    print("chars: %d / %d" % (len(joke), CHAR_LIMIT))
 
 
 if __name__ == "__main__":
-    main()
+    run()
