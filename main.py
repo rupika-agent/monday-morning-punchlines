@@ -2,7 +2,7 @@
 
 import os
 
-ENTRY = "Monday morning is the only meeting my bed refuses to attend, so I send my coffee instead — it shows up late, bitter, and somehow still more awake than me."
+ENTRY = "I set three alarms for 6:00, 6:05 and 6:07 on Monday, and by 6:40 my phone gave up and texted my boss that I was stuck in traffic. I was still in bed. The traffic was my blanket."
 
 OUTPUT_PATH = "/output/entry.txt"
 
@@ -10,6 +10,8 @@ MAX_CHARS = 200
 
 
 def main():
+    if not ENTRY.strip():
+        raise ValueError("Entry must not be only whitespace.")
     if len(ENTRY) > MAX_CHARS:
         raise ValueError(
             f"Entry is {len(ENTRY)} characters, over the {MAX_CHARS} limit."
